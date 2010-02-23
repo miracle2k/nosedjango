@@ -105,6 +105,9 @@ class NoseDjango(Plugin):
         if self.conf.addPaths:
             map(add_path, self.conf.where)
 
+        from nose.tools import set_trace
+        set_trace()
+
         try:
             __import__(self.settings_module)
             self.settings_path = self.settings_module
@@ -148,7 +151,15 @@ class NoseDjango(Plugin):
 
         setup_test_environment()
 
-        connection.creation.create_test_db(verbosity=self.verbosity)
+        # For database creation only, bypass the capture plugin. This
+        # allows the user to interact with the "test database already
+        # exists" message.
+        old_stdout = sys.stdout
+        sys.stdout = sys.__stdout__
+        try:
+            connection.creation.create_test_db(verbosity=self.verbosity)
+        finally:
+            sys.stdout = old_stdout
 
     def _has_transaction_support(self, test):
         from django.conf import settings
