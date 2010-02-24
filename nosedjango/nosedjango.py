@@ -105,9 +105,6 @@ class NoseDjango(Plugin):
         if self.conf.addPaths:
             map(add_path, self.conf.where)
 
-        from nose.tools import set_trace
-        set_trace()
-
         try:
             __import__(self.settings_module)
             self.settings_path = self.settings_module
